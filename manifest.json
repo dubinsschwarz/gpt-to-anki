@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "ChatGPT to Anki",
-  "version": "0.1.8",
-  "description": "Save approved ChatGPT flashcard JSON blocks to Anki via AnkiConnect, with an editable preview dialog, keyboard shortcut, self-healing button, manual paste fallback, optional diagnostics, and post-save edit-feedback copying.",
+  "version": "0.1.9",
+  "description": "Save approved ChatGPT flashcard JSON blocks to Anki via AnkiConnect, with an editable preview dialog, keyboard shortcut, self-healing button, manual paste fallback, optional diagnostics, post-save edit-feedback copying, and a direct AnkiConnect fallback when extension runtime messaging is unavailable.",
   "permissions": [
     "activeTab",
     "storage",
