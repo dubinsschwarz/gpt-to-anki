@@ -44,4 +44,8 @@ The setup takes five minutes. You should have the desktop app for Anki installed
     - Go to Extensions
     - Click on the "ChatGPT to Anki" extension
     - Tick the box "Show diagnostic messages when opening/saving cards"
+ 9. (optional) Tick "Show edit feedback after saving" by default
+    - Go to Extensions
+    - Click on the "ChatGPT to Anki" extension
+    - Tick the box "Tick edit feedback by default in the save dialog"
  9. Setup complete.
