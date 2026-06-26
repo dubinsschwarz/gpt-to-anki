@@ -1,46 +1,90 @@
-# gpt-to-anki
-A simple browser extension to automate the conversion of ChatGPT conversations into flashcards. Code written with GPT-5.5.
+# ChatGPT to Anki v0.1.7
 
-The extension creates a floating button which, when clicked, searches the conversation for a specific format of structured output (JSON) corresponding to a flashcard. If it finds a match, it brings up a dialog box which allows the user to review the proposed flashcard, edit it, and either discard it or save it to Anki. Anki is one of many flashcard applications.
+Prototype browser extension for saving approved ChatGPT flashcard JSON blocks to Anki via local AnkiConnect.
 
-ChatGPT can be instructed on how to format the JSON to the specification with custom instructions or in-context learning. I found that I prefer the latter, so I set up an AutoHotKey script for text expansions to streamline the process. The code for the script is the content of the .txt/.ahk file in this repository.
+## What changed in v0.1.7
 
-This extension works well for me in Microsoft Edge. It may not work as well in Chrome or other browsers because I have not tested it with those browsers.
+Reliability update:
 
-The setup takes five minutes. You should have the desktop app for Anki installed.
+- The floating button is now self-healing. If ChatGPT replaces page content during navigation, the extension periodically checks and re-injects the button if needed.
+- If no marked Anki JSON block is found, the extension opens a manual paste fallback instead of only showing an error.
+- Optional diagnostic messages can be enabled from the extension popup.
 
-1. Download and unzip the .zip file.
-2. Load the extension in your browser
-   - Go to Extensions > Manage Extensions
-   - Enable "Developer mode"
-   - Click on "Load unpacked"
-   - Select the unzipped extension folder
-   You should then see the ChatGPT to Anki extension appear. Check that it also has the version number you expect.
-   - Make note of the ID for the extension.
-3. Install and configure AnkiConnect
-   - Go to Tools > Add-ons
-   - Click on "Get Add-ons..."
-   - Enter this code to install AnkiConnect: "2055492159"
-   - Click "OK"
-   - Restart Anki
-   - Go back to Tools > Add-ons
-   - Select "AnkiConnect"
-   - Click on "Config"
-   - Add a line for your extension with your extension ID to webCorsOriginList
-   Example:
-   "webCorsOriginList": [
+The keyboard shortcut remains:
+
+- **Ctrl+Shift+F** opens the same save dialog as the floating **Save latest Anki card** button on ChatGPT pages.
+
+The modal shortcuts remain:
+
+- **Ctrl+Enter** saves/parses while a dialog is open.
+- **Escape** cancels/closes the dialog.
+
+If Chrome does not assign or enable the shortcut automatically, open `chrome://extensions/shortcuts`, find **ChatGPT to Anki**, and set **Open the Save latest Anki card dialog** to `Ctrl+Shift+F`.
+
+## Install
+
+1. Unzip this folder somewhere stable.
+2. Open `chrome://extensions` or `edge://extensions`.
+3. Enable Developer mode.
+4. Click **Load unpacked**.
+5. Select the unzipped `chatgpt-anki-extension` folder.
+6. Keep Anki open with AnkiConnect installed.
+
+## Optional diagnostics
+
+Click the extension icon in the browser toolbar and tick **Show diagnostic messages**. This makes the extension show extra messages about whether it found a card block, opened the manual fallback, or sent a note to AnkiConnect.
+
+## AnkiConnect CORS config
+
+Copy the extension ID from your browser extensions page and add it to AnkiConnect's `webCorsOriginList`:
+
+```json
+{
+  "apiKey": null,
+  "apiLogPath": null,
+  "ignoreOriginList": [],
+  "webBindAddress": "127.0.0.1",
+  "webBindPort": 8765,
+  "webCorsOriginList": [
     "http://localhost",
     "http://127.0.0.1",
-    "chrome-extension://YOUR_EXTENSION_ID_HERE"
+    "chrome-extension://YOUR_EXTENSION_ID"
   ]
-   - Restart Anki again
- 4. Create an Anki deck called "ChatGPT Flashcards" (default)
- 5. (optional) Set a browser shortcut for the extension
-    - Go to edge://extensions/shortcuts
-    - Set "Open the Save latest Anki card dialog" to your preferred shortcut
- 6. Test the extension. Does it work?
- 7. (optional) Enable diagnostics
-    - Go to Extensions
-    - Click on the "ChatGPT to Anki" extension
-    - Tick the box "Show diagnostic messages when opening/saving cards"
- 8. Setup complete.
+}
+```
+
+Restart Anki after changing the config.
+
+## Expected ChatGPT block format
+
+```text
+ANKI_NOTE_JSON_START
+{
+  "deckName": "ChatGPT Flashcards",
+  "modelName": "Basic",
+  "fields": {
+    "Front": "Question here",
+    "Back": "Answer here"
+  },
+  "tags": ["chatgpt", "anki"]
+}
+ANKI_NOTE_JSON_END
+```
+
+Friendly shape is also accepted:
+
+```json
+{
+  "front": "Question here",
+  "back": "Answer here",
+  "tags": ["chatgpt", "anki"]
+}
+```
+
+## Use
+
+1. Reload ChatGPT after installing/reloading the extension.
+2. Click **Save latest Anki card**, or press **Ctrl+Shift+F**.
+3. If a card is found, edit the modal fields as desired.
+4. If no card is found, paste a marked block or raw JSON into the fallback dialog.
+5. Click **Save edited card to Anki**, or press **Ctrl+Enter** while the dialog is open.
