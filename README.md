@@ -1,7 +1,7 @@
 # gpt-to-anki
 A simple browser extension to automate the conversion of ChatGPT conversations into flashcards. Code written with GPT-5.5.
 
-The extension creates a floating button which, when clicked, searches the conversation for a specific format of structured output (JSON) corresponding to a flashcard. If it finds a match, it brings up a dialog box which allows the user to review the proposed flashcard and either discard it or save it to Anki. Anki is one of many flashcard applications.
+The extension creates a floating button which, when clicked, searches the conversation for a specific format of structured output (JSON) corresponding to a flashcard. If it finds a match, it brings up a dialog box which allows the user to review the proposed flashcard, edit it, and either discard it or save it to Anki. Anki is one of many flashcard applications.
 
 ChatGPT can be instructed on how to format the JSON to the specification with custom instructions or in-context learning. I found that I prefer the latter, so I set up an AutoHotKey script for text expansions to streamline the process. The code for the script is the content of the .txt file in this repository.
 
