@@ -1,6 +1,6 @@
 const START_MARKER = 'ANKI_NOTE_JSON_START';
 const END_MARKER = 'ANKI_NOTE_JSON_END';
-const EXT_VERSION = '0.1.9';
+const EXT_VERSION = '0.1.10';
 const ANKI_CONNECT_URL = 'http://127.0.0.1:8765';
 
 let c2aButtonObserver = null;
@@ -76,8 +76,7 @@ function getNotePreview(note) {
 
 function tagsFromInput(value) {
   return String(value || '').split(/[\s,]+/).map((tag) => tag.trim()).filter(Boolean);
-}
-
+}\n
 function buildEditedNote(originalNote, values) {
   const note = structuredClone(originalNote);
   note.deckName = values.deckName.trim() || 'ChatGPT Flashcards';
@@ -502,8 +501,10 @@ async function saveLatestCard() {
 
 function addButton() {
   if (!document.body) return;
+
   let button = document.getElementById('c2a-save-button');
   if (button?.dataset?.c2aVersion === EXT_VERSION) return;
+
   if (button) button.remove();
 
   button = document.createElement('button');
