@@ -1,6 +1,6 @@
 const START_MARKER = 'ANKI_NOTE_JSON_START';
 const END_MARKER = 'ANKI_NOTE_JSON_END';
-const EXT_VERSION = '0.1.7';
+const EXT_VERSION = '0.1.8';
 
 let c2aButtonObserver = null;
 let c2aButtonWatchdog = null;
@@ -107,6 +107,138 @@ function buildEditedNote(originalNote, formValues) {
     Back: formValues.back.trim()
   };
   return note;
+}
+
+
+function normaliseForCompare(value) {
+  if (Array.isArray(value)) return value.map((item) => String(item).trim()).filter(Boolean);
+  return String(value ?? '').trim();
+}
+
+function arraysEqual(a, b) {
+  if (!Array.isArray(a) || !Array.isArray(b)) return false;
+  if (a.length !== b.length) return false;
+  return a.every((value, index) => value === b[index]);
+}
+
+function describeValue(value) {
+  if (Array.isArray(value)) return JSON.stringify(value);
+  return JSON.stringify(String(value ?? ''));
+}
+
+function getComparableNote(note) {
+  const preview = getNotePreview(note);
+  return {
+    deckName: normaliseForCompare(preview.deckName),
+    modelName: normaliseForCompare(preview.modelName),
+    tags: tagsFromInput(preview.tags),
+    front: normaliseForCompare(preview.front),
+    back: normaliseForCompare(preview.back)
+  };
+}
+
+function buildEditFeedback(originalNote, editedNote) {
+  const original = getComparableNote(originalNote);
+  const edited = getComparableNote(editedNote);
+  const changes = [];
+
+  const addChange = (label, before, after, isArray = false) => {
+    const same = isArray ? arraysEqual(before, after) : before === after;
+    if (!same) changes.push({ label, before, after });
+  };
+
+  addChange('Deck', original.deckName, edited.deckName);
+  addChange('Model', original.modelName, edited.modelName);
+  addChange('Tags', original.tags, edited.tags, true);
+  addChange('Front', original.front, edited.front);
+  addChange('Back', original.back, edited.back);
+
+  if (!changes.length) {
+    return 'Flashcard edit feedback for this chat:\n- No edits were made to the saved flashcard.';
+  }
+
+  const lines = [
+    'Flashcard edit feedback for this chat:',
+    ...changes.map((change) => `- ${change.label} changed from ${describeValue(change.before)} to ${describeValue(change.after)}.`),
+    'Please use these edits as guidance for future Anki flashcards in this chat.'
+  ];
+  return lines.join('\n');
+}
+
+async function copyTextToClipboard(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (error) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    textarea.style.top = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    let copied = false;
+    try {
+      copied = document.execCommand('copy');
+    } finally {
+      textarea.remove();
+    }
+    if (!copied) throw error;
+    return true;
+  }
+}
+
+function showPostSaveModal(originalNote, editedNote, noteId) {
+  const feedback = buildEditFeedback(originalNote, editedNote);
+  const shell = makeModalShell(
+    'Saved to Anki',
+    `Note ID: ${noteId}. You can copy a concise edit summary back into ChatGPT if you want it to adapt in this chat.`
+  );
+
+  const feedbackField = buildTextarea('Edit feedback for ChatGPT', feedback, { rows: 8, spellcheck: true });
+  feedbackField.textarea.readOnly = false;
+  shell.content.append(feedbackField.wrapper);
+
+  const closeButton = document.createElement('button');
+  closeButton.type = 'button';
+  closeButton.className = 'c2a-secondary-button';
+  closeButton.textContent = 'Close';
+
+  const copyButton = document.createElement('button');
+  copyButton.type = 'button';
+  copyButton.className = 'c2a-primary-button';
+  copyButton.textContent = 'Copy feedback for ChatGPT';
+
+  shell.footer.append(closeButton, copyButton);
+
+  const finish = () => {
+    closeModal();
+    document.removeEventListener('keydown', onKeyDown, true);
+  };
+
+  async function copyFeedback() {
+    try {
+      await copyTextToClipboard(feedbackField.textarea.value);
+      showToast('Copied edit feedback to clipboard. Paste it into ChatGPT if you want me to learn from it in this chat.');
+    } catch (error) {
+      showError('Could not copy feedback to clipboard.', error.message || String(error));
+    }
+  }
+
+  function onKeyDown(event) {
+    if (event.key === 'Escape') finish();
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') copyFeedback();
+  }
+
+  shell.backdrop.addEventListener('click', finish);
+  shell.closeButton.addEventListener('click', finish);
+  closeButton.addEventListener('click', finish);
+  copyButton.addEventListener('click', copyFeedback);
+  document.addEventListener('keydown', onKeyDown, true);
+
+  feedbackField.textarea.focus();
+  feedbackField.textarea.select();
 }
 
 function showToast(text, isError = false, timeoutMs = 5000) {
@@ -389,7 +521,7 @@ async function saveLatestCard() {
     }
 
     if (response?.ok) {
-      showToast(`Saved to Anki. Note ID: ${response.noteId}`);
+      showPostSaveModal(note, editedNote, response.noteId);
     } else {
       showError('Failed to save to Anki.', response?.error || 'Unknown error from AnkiConnect.');
     }
