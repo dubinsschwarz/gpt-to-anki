@@ -39,8 +39,9 @@ The setup takes five minutes. You should have the desktop app for Anki installed
     - Go to edge://extensions/shortcuts
     - Set "Open the Save latest Anki card dialog" to your preferred shortcut
  6. Test the extension. Does it work?
- 7. (optional) Enable diagnostics
+    - Make sure Anki is open while trying to use the extension
+ 8. (optional) Enable diagnostics
     - Go to Extensions
     - Click on the "ChatGPT to Anki" extension
     - Tick the box "Show diagnostic messages when opening/saving cards"
- 8. Setup complete.
+ 9. Setup complete.
