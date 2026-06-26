@@ -11,13 +11,17 @@
     </style>
   </head>
   <body>
-    <strong>ChatGPT to Anki v0.1.9</strong>
+    <strong>ChatGPT to Anki v0.1.10</strong>
     <p>Looks for the latest block on the page marked:</p>
     <p><code>ANKI_NOTE_JSON_START</code><br><code>ANKI_NOTE_JSON_END</code></p>
-    <p><strong>Reliability:</strong> self-healing floating button, manual JSON paste fallback, optional diagnostics, and copyable edit feedback after saving.</p>
+    <p><strong>Reliability:</strong> self-healing floating button, manual JSON paste fallback, optional diagnostics, and optional edit feedback after saving.</p>
     <label>
       <input id="diagnostics" type="checkbox">
       <span>Show diagnostic messages when opening/saving cards</span>
+    </label>
+    <label>
+      <input id="feedback-default" type="checkbox">
+      <span>Tick edit feedback by default in the save dialog</span>
     </label>
     <p class="small" id="status"></p>
     <p class="small">Keep Anki open with AnkiConnect installed.</p>
