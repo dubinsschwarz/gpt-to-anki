@@ -1,15 +1,16 @@
-# ChatGPT to Anki v0.1.8
+# ChatGPT to Anki v0.1.10
 
 [Written by GPT-5.5.] Prototype browser extension for saving approved ChatGPT flashcard JSON blocks to Anki via local AnkiConnect.
 
-## What changed in v0.1.8
+## What changed in v0.1.10
 
-Edit-feedback update:
+Edit-feedback UX update:
 
-- After a card is saved to Anki, the extension shows a post-save dialog with a concise edit-feedback summary.
-- The summary compares the original ChatGPT card with the edited card actually saved to Anki.
-- Click **Copy feedback for ChatGPT** to copy that summary, then paste it into the chat if you want ChatGPT to adapt to your edits in-context.
-- The v0.1.7 reliability features remain: self-healing button, manual paste fallback, and optional diagnostics.
+- Edit feedback is now optional for each card from the save dialog.
+- The per-card feedback checkbox is off by default unless changed in the extension popup.
+- The extension popup now has a preference to tick edit feedback by default across future cards.
+- If no edits were made, the extension saves the card without showing an edit-feedback screen.
+- Keep Anki open while saving cards; the extension talks to local AnkiConnect.
 
 The keyboard shortcut remains:
 
@@ -20,20 +21,23 @@ The modal shortcuts remain:
 - **Ctrl+Enter** saves/parses while a dialog is open.
 - **Escape** cancels/closes the dialog.
 
-If Chrome does not assign or enable the shortcut automatically, open `chrome://extensions/shortcuts`, find **ChatGPT to Anki**, and set **Open the Save latest Anki card dialog** to `Ctrl+Shift+F`.
+If Chrome or Edge does not assign or enable the shortcut automatically, open `chrome://extensions/shortcuts` or `edge://extensions/shortcuts`, find **ChatGPT to Anki**, and set **Open the Save latest Anki card dialog** to `Ctrl+Shift+F`.
 
 ## Install
 
 1. Unzip this folder somewhere stable.
-2. Open `chrome://extensions` or `edge://extensions`.
+2. Open `chrome://extensions`, `edge://extensions`, or your Chromium browser's extensions page.
 3. Enable Developer mode.
 4. Click **Load unpacked**.
 5. Select the unzipped `chatgpt-anki-extension` folder.
 6. Keep Anki open with AnkiConnect installed.
 
-## Optional diagnostics
+## Extension options
 
-Click the extension icon in the browser toolbar and tick **Show diagnostic messages**. This makes the extension show extra messages about whether it found a card block, opened the manual fallback, or sent a note to AnkiConnect.
+Click the extension icon in the browser toolbar.
+
+- **Show diagnostic messages when opening/saving cards**: shows extra information about card detection and save routing.
+- **Tick edit feedback by default in the save dialog**: makes the per-card edit-feedback checkbox start checked. This is off by default.
 
 ## AnkiConnect CORS config
 
@@ -87,6 +91,7 @@ Friendly shape is also accepted:
 1. Reload ChatGPT after installing/reloading the extension.
 2. Click **Save latest Anki card**, or press **Ctrl+Shift+F**.
 3. If a card is found, edit the modal fields as desired.
-4. If no card is found, paste a marked block or raw JSON into the fallback dialog.
-5. Click **Save edited card to Anki**, or press **Ctrl+Enter** while the edit dialog is open.
-6. After saving, optionally click **Copy feedback for ChatGPT** and paste it into the chat so ChatGPT can learn from your edits in-context.
+4. Optionally tick **Show edit feedback after saving** if you want a copyable edit summary after saving.
+5. If no card is found, paste a marked block or raw JSON into the fallback dialog.
+6. Click **Save edited card to Anki**, or press **Ctrl+Enter** while the edit dialog is open.
+7. If edit feedback was requested and edits were actually made, copy the generated feedback into the chat so ChatGPT can adapt in-context.
