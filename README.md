@@ -1,14 +1,15 @@
-# ChatGPT to Anki v0.1.7
+# ChatGPT to Anki v0.1.8
 
 [Written by GPT-5.5.] Prototype browser extension for saving approved ChatGPT flashcard JSON blocks to Anki via local AnkiConnect.
 
-## What changed in v0.1.7
+## What changed in v0.1.8
 
-Reliability update:
+Edit-feedback update:
 
-- The floating button is now self-healing. If ChatGPT replaces page content during navigation, the extension periodically checks and re-injects the button if needed.
-- If no marked Anki JSON block is found, the extension opens a manual paste fallback instead of only showing an error.
-- Optional diagnostic messages can be enabled from the extension popup.
+- After a card is saved to Anki, the extension shows a post-save dialog with a concise edit-feedback summary.
+- The summary compares the original ChatGPT card with the edited card actually saved to Anki.
+- Click **Copy feedback for ChatGPT** to copy that summary, then paste it into the chat if you want ChatGPT to adapt to your edits in-context.
+- The v0.1.7 reliability features remain: self-healing button, manual paste fallback, and optional diagnostics.
 
 The keyboard shortcut remains:
 
@@ -87,4 +88,5 @@ Friendly shape is also accepted:
 2. Click **Save latest Anki card**, or press **Ctrl+Shift+F**.
 3. If a card is found, edit the modal fields as desired.
 4. If no card is found, paste a marked block or raw JSON into the fallback dialog.
-5. Click **Save edited card to Anki**, or press **Ctrl+Enter** while the dialog is open.
+5. Click **Save edited card to Anki**, or press **Ctrl+Enter** while the edit dialog is open.
+6. After saving, optionally click **Copy feedback for ChatGPT** and paste it into the chat so ChatGPT can learn from your edits in-context.
