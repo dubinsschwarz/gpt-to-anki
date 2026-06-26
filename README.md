@@ -1,6 +1,6 @@
 # ChatGPT to Anki v0.1.7
 
-Prototype browser extension for saving approved ChatGPT flashcard JSON blocks to Anki via local AnkiConnect.
+[Written by GPT-5.5.] Prototype browser extension for saving approved ChatGPT flashcard JSON blocks to Anki via local AnkiConnect.
 
 ## What changed in v0.1.7
 
